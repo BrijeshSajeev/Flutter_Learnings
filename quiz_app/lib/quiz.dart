@@ -25,11 +25,17 @@ class _QuizState extends State<Quiz> {
     activeState = StartScreen(switchScreen);
   }
 
+  void restartQuiz() {
+    setState(() {
+      activeState = StartScreen(switchScreen);
+    });
+  }
+
   void chooseAnswer(String ans) {
     selectAnswers.add(ans);
     if (selectAnswers.length == questions.length) {
       setState(() {
-        activeState = ResultScreen(choosenAnswer: selectAnswers);
+        activeState = ResultScreen(restartQuiz, choosenAnswer: selectAnswers);
         selectAnswers = [];
       });
     }

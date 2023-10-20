@@ -51,11 +51,14 @@ class _QuizScreenState extends State<QuizScreen> {
             ),
             // Spread Operation
             ...currentQuestion.getShuffledList().map((answer) {
-              return AnswerButton(
-                answerText: answer,
-                onTap: () {
-                  answerQuestion(answer);
-                },
+              return Container(
+                margin: const EdgeInsets.only(top: 10),
+                child: AnswerButton(
+                  answerText: answer,
+                  onTap: () {
+                    answerQuestion(answer);
+                  },
+                ),
               );
             })
           ],
