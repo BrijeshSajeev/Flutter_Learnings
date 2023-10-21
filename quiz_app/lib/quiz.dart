@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quiz_app/data/questions.dart';
+import 'package:quiz_app/overview_screen.dart';
 import 'package:quiz_app/quiz_screen.dart';
 import 'package:quiz_app/result_screen.dart';
 import 'package:quiz_app/start_screen.dart';
@@ -43,7 +44,8 @@ class _QuizState extends State<Quiz> {
 
   void switchScreen() {
     setState(() {
-      activeState = QuizScreen(onSelectAnswer: chooseAnswer);
+      // activeState = QuizScreen(onSelectAnswer: chooseAnswer);
+      activeState = const OverViewScreen();
     });
   }
 

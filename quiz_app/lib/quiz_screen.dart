@@ -5,8 +5,10 @@ import 'package:quiz_app/models/quiz_question.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class QuizScreen extends StatefulWidget {
-  const QuizScreen({super.key, required this.onSelectAnswer});
+  const QuizScreen(this.quizQuestion,
+      {super.key, required this.onSelectAnswer});
 
+  final List<QuizQuestion> quizQuestion;
   final void Function(String ans) onSelectAnswer;
 
   @override
