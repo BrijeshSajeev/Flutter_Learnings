@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quiz_app/warpper/button_warpper.dart';
+import 'package:quiz_app/models/quiz_question.dart';
 
 class OverViewScreen extends StatelessWidget {
-  const OverViewScreen({super.key});
+  const OverViewScreen(this.setQuestion, {super.key});
 
+  final void Function(List<QuizQuestion> questions) setQuestion;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,43 +28,47 @@ class OverViewScreen extends StatelessWidget {
             const SizedBox(
               height: 40,
             ),
-            const Column(
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ButtonWarpper('HTML', Colors.white),
-                    SizedBox(
+                    ButtonWarpper(
+                      'HTML',
+                      setQuestion,
+                      Colors.white,
+                    ),
+                    const SizedBox(
                       width: 20,
                     ),
-                    ButtonWarpper('CSS', Colors.white),
+                    ButtonWarpper('CSS', setQuestion, Colors.white),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ButtonWarpper('Flutter', Colors.white),
-                    SizedBox(
+                    ButtonWarpper('Flutter', setQuestion, Colors.white),
+                    const SizedBox(
                       width: 20,
                     ),
-                    ButtonWarpper('C++', Colors.white),
+                    ButtonWarpper('C++', setQuestion, Colors.white),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ButtonWarpper('Java', Colors.white),
-                    SizedBox(
+                    ButtonWarpper('Java', setQuestion, Colors.white),
+                    const SizedBox(
                       width: 20,
                     ),
-                    ButtonWarpper('Python', Colors.white),
+                    ButtonWarpper('Python', setQuestion, Colors.white),
                   ],
                 ),
               ],

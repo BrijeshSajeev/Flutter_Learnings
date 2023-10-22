@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quiz_app/data/questions.dart';
+import 'package:quiz_app/models/quiz_question.dart';
 import 'package:quiz_app/quiz_summary.dart';
 
 class ResultScreen extends StatelessWidget {
-  const ResultScreen(this.restartQuiz,
+  const ResultScreen(this.restartQuiz, this.ques,
       {super.key, required this.choosenAnswer});
   final List<String> choosenAnswer;
+  final List<QuizQuestion> ques;
   final void Function() restartQuiz;
 
   List<Map<String, Object>> getSummeryData() {
@@ -15,8 +17,8 @@ class ResultScreen extends StatelessWidget {
     for (var i = 0; i < choosenAnswer.length; i++) {
       summary.add({
         'question_index': i,
-        'question': questions[i].text,
-        'correct_answer': questions[i].answers[0],
+        'question': ques[i].text,
+        'correct_answer': ques[i].answers[0],
         'user_answer': choosenAnswer[i]
       });
     }
