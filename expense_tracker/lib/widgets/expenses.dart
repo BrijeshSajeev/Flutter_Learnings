@@ -32,6 +32,31 @@ class _ExpensesState extends State<Expenses> {
     });
   }
 
+  void _removeExpense(Expense expense) {
+    final expenseIndex = _regeisteredExpenses.indexOf(expense);
+    setState(() {
+      _regeisteredExpenses.remove(expense);
+    });
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 3),
+        content: const Text('Expense Deleted'),
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
+        action: SnackBarAction(
+          label: 'undo',
+          onPressed: () {
+            setState(
+              () {
+                _regeisteredExpenses.insert(expenseIndex, expense);
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   void _openAddExpenseOverlay() {
     showModalBottomSheet(
       isScrollControlled: true,
@@ -57,7 +82,16 @@ class _ExpensesState extends State<Expenses> {
       body: Column(
         children: [
           const Text("Chart"),
-          Expanded(child: ExpensesList(expenses: _regeisteredExpenses)),
+          Expanded(
+            child: _regeisteredExpenses.isNotEmpty
+                ? ExpensesList(
+                    expenses: _regeisteredExpenses,
+                    onRemovedExpense: _removeExpense,
+                  )
+                : const Center(
+                    child: Text('Add new Expense'),
+                  ),
+          ),
         ],
       ),
     );
