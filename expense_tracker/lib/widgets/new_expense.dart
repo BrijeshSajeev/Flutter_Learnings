@@ -76,92 +76,169 @@ class _NewExpenseState extends State<NewExpense> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 48, 16, 16),
-      child: Column(
+    final keyboardSpcae = MediaQuery.of(context).viewInsets.bottom;
+
+    Widget titleText = TextField(
+      controller: _titleController,
+      maxLength: 50,
+      decoration: const InputDecoration(
+        label: Text('Title'),
+      ),
+    );
+    Widget amountText = Expanded(
+      child: TextField(
+        controller: _amountController,
+        keyboardType: TextInputType.number,
+        decoration: const InputDecoration(
+          prefixText: '\$ ',
+          label: Text('Amount'),
+        ),
+      ),
+    );
+    Widget datePicker = Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          TextField(
-            controller: _titleController,
-            maxLength: 50,
-            decoration: const InputDecoration(
-              label: Text('Title'),
+          Text(
+            _selectedDate == null
+                ? 'no date selected'
+                : formatter.format(_selectedDate!),
+          ),
+          IconButton(
+            onPressed: _presentDatePicker,
+            icon: const Icon(Icons.calendar_month),
+          )
+        ],
+      ),
+    );
+    Widget dropDownButton = DropdownButton(
+      value: _selectedCategory,
+      items: Category.values
+          .map(
+            (category) => DropdownMenuItem(
+              value: category,
+              child: Text(category.name.toUpperCase()),
+            ),
+          )
+          .toList(),
+      onChanged: (val) {
+        if (val == null) {
+          return;
+        }
+        setState(() {
+          _selectedCategory = val;
+        });
+      },
+    );
+
+/*
+    return LayoutBuilder(
+      builder: (ctx, constrain) {
+        final width = constrain.maxWidth;
+
+        print(constrain.maxWidth);
+        return SizedBox(
+          height: double.infinity,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(16, 16, 16, keyboardSpcae + 16),
+              child: Column(
+                children: [
+                  if (width > 600)
+                    Row(
+                      children: [
+                        titleText,
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        amountText
+                      ],
+                    )
+                  else
+                    titleText,
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    children: [
+                      amountText,
+                      const SizedBox(
+                        width: 50,
+                      ),
+                      datePicker,
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Row(
+                    children: [
+                      dropDownButton,
+                      const Spacer(),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Cancel'),
+                      ),
+                      ElevatedButton(
+                        onPressed: _submitInput,
+                        child: const Text("Save"),
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
-          const SizedBox(
-            height: 10,
-          ),
-          Row(
+        );
+      },
+    );
+*/
+
+    return SizedBox(
+      height: double.infinity,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(16, 16, 16, keyboardSpcae + 16),
+          child: Column(
             children: [
-              Expanded(
-                child: TextField(
-                  controller: _amountController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    prefixText: '\$ ',
-                    label: Text('Amount'),
+              titleText,
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  amountText,
+                  const SizedBox(
+                    width: 50,
                   ),
-                ),
+                  datePicker,
+                ],
               ),
               const SizedBox(
-                width: 50,
+                height: 30,
               ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      _selectedDate == null
-                          ? 'no date selected'
-                          : formatter.format(_selectedDate!),
-                    ),
-                    IconButton(
-                      onPressed: _presentDatePicker,
-                      icon: const Icon(Icons.calendar_month),
-                    )
-                  ],
-                ),
+              Row(
+                children: [
+                  dropDownButton,
+                  const Spacer(),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Cancel'),
+                  ),
+                  ElevatedButton(
+                    onPressed: _submitInput,
+                    child: const Text("Save"),
+                  ),
+                ],
               )
             ],
           ),
-          const SizedBox(
-            height: 30,
-          ),
-          Row(
-            children: [
-              DropdownButton(
-                value: _selectedCategory,
-                items: Category.values
-                    .map(
-                      (category) => DropdownMenuItem(
-                        value: category,
-                        child: Text(category.name.toUpperCase()),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (val) {
-                  if (val == null) {
-                    return;
-                  }
-                  setState(() {
-                    _selectedCategory = val;
-                  });
-                },
-              ),
-              const Spacer(),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: _submitInput,
-                child: const Text("Save"),
-              ),
-            ],
-          )
-        ],
+        ),
       ),
     );
   }

@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:expense_tracker/models/expense.dart';
 import 'package:expense_tracker/widgets/chart/chart.dart';
 import 'package:expense_tracker/widgets/expense_helper/expenses_list.dart';
@@ -13,19 +16,42 @@ class Expenses extends StatefulWidget {
   }
 }
 
-class _ExpensesState extends State<Expenses> {
-  final List<Expense> _regeisteredExpenses = [
-    Expense(
-        title: 'food',
-        amount: 100,
-        date: DateTime.now(),
-        category: Category.food),
-    Expense(
-        title: 'Flutter Course',
-        amount: 499,
-        date: DateTime.now(),
-        category: Category.work),
-  ];
+class _ExpensesState extends State<Expenses> with WidgetsBindingObserver {
+  List<Expense> _regeisteredExpenses = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    // Load transactions from file when the app starts
+    loadTransactionsFromFile();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      // Save transactions to file when the app is paused (closed)
+      saveTransactionsToFile();
+    }
+  }
+
+  void saveTransactionsToFile() async {
+    print("hello save tarnsaction");
+    final file = File('transactions.txt');
+    print(file);
+    await file.writeAsString(
+        jsonEncode(_regeisteredExpenses.map((t) => t.toJson()).toList()));
+  }
+
+  void loadTransactionsFromFile() async {
+    final file = File('transactions.txt');
+    if (await file.exists()) {
+      String transactionsString = await file.readAsString();
+      List<dynamic> decodedJson = jsonDecode(transactionsString);
+      _regeisteredExpenses =
+          decodedJson.map((item) => Expense.fromJson(item)).toList();
+    }
+  }
 
   void _addExpense(Expense expense) {
     setState(() {
@@ -60,6 +86,7 @@ class _ExpensesState extends State<Expenses> {
 
   void _openAddExpenseOverlay() {
     showModalBottomSheet(
+      useSafeArea: true,
       isScrollControlled: true,
       context: context,
       builder: (ctx) => NewExpense(
@@ -70,6 +97,8 @@ class _ExpensesState extends State<Expenses> {
 
   @override
   Widget build(context) {
+    final width = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Track Day"),
@@ -80,21 +109,37 @@ class _ExpensesState extends State<Expenses> {
           )
         ],
       ),
-      body: Column(
-        children: [
-          Chart(expenses: _regeisteredExpenses),
-          Expanded(
-            child: _regeisteredExpenses.isNotEmpty
-                ? ExpensesList(
-                    expenses: _regeisteredExpenses,
-                    onRemovedExpense: _removeExpense,
-                  )
-                : const Center(
-                    child: Text('Add new Expense'),
-                  ),
-          ),
-        ],
-      ),
+      body: width < 600
+          ? Column(
+              children: [
+                Chart(expenses: _regeisteredExpenses),
+                Expanded(
+                  child: _regeisteredExpenses.isNotEmpty
+                      ? ExpensesList(
+                          expenses: _regeisteredExpenses,
+                          onRemovedExpense: _removeExpense,
+                        )
+                      : const Center(
+                          child: Text('Add new Expense'),
+                        ),
+                ),
+              ],
+            )
+          : Row(
+              children: [
+                Expanded(child: Chart(expenses: _regeisteredExpenses)),
+                Expanded(
+                  child: _regeisteredExpenses.isNotEmpty
+                      ? ExpensesList(
+                          expenses: _regeisteredExpenses,
+                          onRemovedExpense: _removeExpense,
+                        )
+                      : const Center(
+                          child: Text('Add new Expense'),
+                        ),
+                ),
+              ],
+            ),
     );
   }
 }

@@ -16,12 +16,12 @@ const categoryIcons = {
 };
 
 class Expense {
-  Expense(
-      {required this.title,
-      required this.amount,
-      required this.date,
-      required this.category})
-      : id = uuid.v4();
+  Expense({
+    required this.title,
+    required this.amount,
+    required this.date,
+    required this.category,
+  }) : id = uuid.v4();
 
   final String id;
   final String title;
@@ -31,6 +31,28 @@ class Expense {
 
   String get formatDate {
     return formatter.format(date);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'date': date.toIso8601String(), // Serialize DateTime to a string
+      'category': category.toString(), // Serialize enum to string
+      'title': title,
+      'amount': amount,
+    };
+  }
+
+  factory Expense.fromJson(Map<String, dynamic> json) {
+    return Expense(
+      title: json['title'] as String,
+      amount: json['amount'] as double,
+      date: DateTime.parse(
+          json['date'] as String), // Parse string back to DateTime
+      category: Category.values.firstWhere((e) =>
+          e.toString() ==
+          json['category'] as String), // Deserialize enum from string
+    );
   }
 }
 
