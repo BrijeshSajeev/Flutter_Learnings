@@ -19,39 +19,39 @@ class Expenses extends StatefulWidget {
 class _ExpensesState extends State<Expenses> with WidgetsBindingObserver {
   List<Expense> _regeisteredExpenses = [];
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    // Load transactions from file when the app starts
-    loadTransactionsFromFile();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   WidgetsBinding.instance.addObserver(this);
+  //   // Load transactions from file when the app starts
+  //   loadTransactionsFromFile();
+  // }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      // Save transactions to file when the app is paused (closed)
-      saveTransactionsToFile();
-    }
-  }
+  // @override
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   if (state == AppLifecycleState.paused) {
+  //     // Save transactions to file when the app is paused (closed)
+  //     saveTransactionsToFile();
+  //   }
+  // }
 
-  void saveTransactionsToFile() async {
-    print("hello save tarnsaction");
-    final file = File('transactions.txt');
-    print(file);
-    await file.writeAsString(
-        jsonEncode(_regeisteredExpenses.map((t) => t.toJson()).toList()));
-  }
+  // void saveTransactionsToFile() async {
+  //   print("hello save tarnsaction");
+  //   final file = File('transactions.txt');
+  //   print(file);
+  //   await file.writeAsString(
+  //       jsonEncode(_regeisteredExpenses.map((t) => t.toJson()).toList()));
+  // }
 
-  void loadTransactionsFromFile() async {
-    final file = File('transactions.txt');
-    if (await file.exists()) {
-      String transactionsString = await file.readAsString();
-      List<dynamic> decodedJson = jsonDecode(transactionsString);
-      _regeisteredExpenses =
-          decodedJson.map((item) => Expense.fromJson(item)).toList();
-    }
-  }
+  // void loadTransactionsFromFile() async {
+  //   final file = File('transactions.txt');
+  //   if (await file.exists()) {
+  //     String transactionsString = await file.readAsString();
+  //     List<dynamic> decodedJson = jsonDecode(transactionsString);
+  //     _regeisteredExpenses =
+  //         decodedJson.map((item) => Expense.fromJson(item)).toList();
+  //   }
+  // }
 
   void _addExpense(Expense expense) {
     setState(() {
