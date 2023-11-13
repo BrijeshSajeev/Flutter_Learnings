@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:expense_tracker/models/expense.dart';
+import 'package:expense_tracker/models/expense_storage.dart';
 import 'package:expense_tracker/widgets/chart/chart.dart';
 import 'package:expense_tracker/widgets/expense_helper/expenses_list.dart';
 import 'package:expense_tracker/widgets/new_expense.dart';
@@ -17,41 +18,62 @@ class Expenses extends StatefulWidget {
 }
 
 class _ExpensesState extends State<Expenses> with WidgetsBindingObserver {
-  List<Expense> _regeisteredExpenses = [];
+  List<Expense> _regeisteredExpenses = [
+    Expense(
+      title: "title",
+      amount: 200,
+      date: DateTime.now(),
+      category: Category.food,
+    ),
+    Expense(
+      title: "title2",
+      amount: 200,
+      date: DateTime.now(),
+      category: Category.food,
+    ),
+  ];
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   WidgetsBinding.instance.addObserver(this);
-  //   // Load transactions from file when the app starts
-  //   loadTransactionsFromFile();
-  // }
+  // Expense storage instance
+  final ExpenseStorage _expenseStorage = ExpenseStorage();
 
-  // @override
-  // void didChangeAppLifecycleState(AppLifecycleState state) {
-  //   if (state == AppLifecycleState.paused) {
-  //     // Save transactions to file when the app is paused (closed)
-  //     saveTransactionsToFile();
-  //   }
-  // }
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance?.addObserver(this);
 
-  // void saveTransactionsToFile() async {
-  //   print("hello save tarnsaction");
-  //   final file = File('transactions.txt');
-  //   print(file);
-  //   await file.writeAsString(
-  //       jsonEncode(_regeisteredExpenses.map((t) => t.toJson()).toList()));
-  // }
+    // Load expenses when the app is opened
+    _loadExpenses();
+  }
 
-  // void loadTransactionsFromFile() async {
-  //   final file = File('transactions.txt');
-  //   if (await file.exists()) {
-  //     String transactionsString = await file.readAsString();
-  //     List<dynamic> decodedJson = jsonDecode(transactionsString);
-  //     _regeisteredExpenses =
-  //         decodedJson.map((item) => Expense.fromJson(item)).toList();
-  //   }
-  // }
+  @override
+  void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
+    super.dispose();
+  }
+
+  // Callback for app lifecycle state changes
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      // Save expenses when the app is closed
+      _saveExpenses();
+    }
+  }
+
+  // Function to save expenses
+  Future<void> _saveExpenses() async {
+    await _expenseStorage.saveExpenses(_regeisteredExpenses);
+  }
+
+  // Function to load expenses
+  Future<void> _loadExpenses() async {
+    print("object");
+    final loadedExpenses = await _expenseStorage.loadExpenses();
+    setState(() {
+      _regeisteredExpenses = loadedExpenses;
+      print(_regeisteredExpenses);
+    });
+  }
 
   void _addExpense(Expense expense) {
     setState(() {
