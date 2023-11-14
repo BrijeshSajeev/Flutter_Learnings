@@ -1,5 +1,6 @@
 import 'package:expense_tracker/widgets/expenses.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter/material.dart';
 
@@ -12,14 +13,15 @@ var kDarkScheme = ColorScheme.fromSeed(
   seedColor: const Color.fromARGB(255, 5, 99, 125),
 );
 
-void main() {
+void main() async {
   // -- When we need to set the device rotation.
   // WidgetsFlutterBinding.ensureInitialized();
   // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
   //     .then((fn) {
   //       runApp(...);
   //     });
-
+  WidgetsFlutterBinding.ensureInitialized();
+  await SharedPreferences.getInstance();
   runApp(
     MaterialApp(
       darkTheme: ThemeData.dark().copyWith(
