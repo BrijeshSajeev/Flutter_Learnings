@@ -39,7 +39,7 @@ class _ExpensesState extends State<Expenses> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
 
     // Load expenses when the app is opened
     _loadExpenses();
@@ -47,15 +47,18 @@ class _ExpensesState extends State<Expenses> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   // Callback for app lifecycle state changes
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      // Save expenses when the app is closed
+    super.didChangeAppLifecycleState(state);
+
+    // Save expenses when the app is closed
+    if (state == AppLifecycleState.detached ||
+        state == AppLifecycleState.paused) {
       _saveExpenses();
     }
   }
@@ -67,11 +70,9 @@ class _ExpensesState extends State<Expenses> with WidgetsBindingObserver {
 
   // Function to load expenses
   Future<void> _loadExpenses() async {
-    print("object");
     final loadedExpenses = await _expenseStorage.loadExpenses();
     setState(() {
       _regeisteredExpenses = loadedExpenses;
-      print(_regeisteredExpenses);
     });
   }
 
@@ -145,6 +146,21 @@ class _ExpensesState extends State<Expenses> with WidgetsBindingObserver {
                           child: Text('Add new Expense'),
                         ),
                 ),
+                TextButton(
+                  onPressed: () async {
+                    await _expenseStorage.saveExpenses(_regeisteredExpenses);
+                  },
+                  style: TextButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(59, 239, 221, 253),
+                  ),
+                  child: const Text("save",
+                      style: TextStyle(
+                        fontSize: 16,
+                      )),
+                ),
+                const SizedBox(
+                  height: 20,
+                )
               ],
             )
           : Row(
@@ -160,6 +176,12 @@ class _ExpensesState extends State<Expenses> with WidgetsBindingObserver {
                           child: Text('Add new Expense'),
                         ),
                 ),
+                TextButton(
+                  onPressed: () async {
+                    await _expenseStorage.saveExpenses(_regeisteredExpenses);
+                  },
+                  child: const Text("save"),
+                )
               ],
             ),
     );

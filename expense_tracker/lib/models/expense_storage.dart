@@ -5,7 +5,7 @@ import 'dart:convert';
 class ExpenseStorage {
   Future<void> saveExpenses(List<Expense> expenses) async {
     final prefs = await SharedPreferences.getInstance();
-    final key = 'expenses';
+    const key = 'expenses';
 
     // Convert List<Expense> to List<String>
     final value =
@@ -16,7 +16,7 @@ class ExpenseStorage {
 
   Future<List<Expense>> loadExpenses() async {
     final prefs = await SharedPreferences.getInstance();
-    final key = 'expenses';
+    const key = 'expenses';
     final value = prefs.getStringList(key);
 
     if (value == null) {
