@@ -3,6 +3,23 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class ExpenseStorage {
+  Future<void> saveBalance(double balance) async {
+    final prefs = await SharedPreferences.getInstance();
+    const key = 'balance';
+    prefs.setDouble(key, balance);
+  }
+
+  Future<double> loadBalance() async {
+    final prefs = await SharedPreferences.getInstance();
+    const key = 'balance';
+    final value = prefs.getDouble(key);
+
+    if (value == null) {
+      return 0;
+    }
+    return value;
+  }
+
   Future<void> saveExpenses(List<Expense> expenses) async {
     final prefs = await SharedPreferences.getInstance();
     const key = 'expenses';

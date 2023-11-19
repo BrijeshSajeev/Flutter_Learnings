@@ -1,9 +1,8 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:expense_tracker/models/expense.dart';
 import 'package:expense_tracker/models/expense_storage.dart';
 import 'package:expense_tracker/widgets/chart/chart.dart';
+import 'package:expense_tracker/widgets/expense_helper/balance_enquirey.dart';
+
 import 'package:expense_tracker/widgets/expense_helper/expenses_list.dart';
 import 'package:expense_tracker/widgets/new_expense.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +32,8 @@ class _ExpensesState extends State<Expenses> with WidgetsBindingObserver {
     ),
   ];
 
+  double totalSpeand = 0;
+
   // Expense storage instance
   final ExpenseStorage _expenseStorage = ExpenseStorage();
 
@@ -56,11 +57,22 @@ class _ExpensesState extends State<Expenses> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
-    // Save expenses when the app is closed
+    // // Save expenses when the app is closed
     if (state == AppLifecycleState.detached ||
+        state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.hidden ||
         state == AppLifecycleState.paused) {
       _saveExpenses();
     }
+  }
+
+  void totalSpendings() {
+    setState(() {
+      totalSpeand = 0;
+      for (var ele in _regeisteredExpenses) {
+        totalSpeand += ele.amount;
+      }
+    });
   }
 
   // Function to save expenses
@@ -74,11 +86,14 @@ class _ExpensesState extends State<Expenses> with WidgetsBindingObserver {
     setState(() {
       _regeisteredExpenses = loadedExpenses;
     });
+    totalSpendings();
   }
 
   void _addExpense(Expense expense) {
     setState(() {
       _regeisteredExpenses.add(expense);
+      _saveExpenses();
+      totalSpendings();
     });
   }
 
@@ -99,6 +114,7 @@ class _ExpensesState extends State<Expenses> with WidgetsBindingObserver {
             setState(
               () {
                 _regeisteredExpenses.insert(expenseIndex, expense);
+                totalSpendings();
               },
             );
           },
@@ -135,6 +151,10 @@ class _ExpensesState extends State<Expenses> with WidgetsBindingObserver {
       body: width < 600
           ? Column(
               children: [
+                BalanceEnquirey(totalSpeand),
+                const SizedBox(
+                  height: 20,
+                ),
                 Chart(expenses: _regeisteredExpenses),
                 Expanded(
                   child: _regeisteredExpenses.isNotEmpty
@@ -146,21 +166,6 @@ class _ExpensesState extends State<Expenses> with WidgetsBindingObserver {
                           child: Text('Add new Expense'),
                         ),
                 ),
-                TextButton(
-                  onPressed: () async {
-                    await _expenseStorage.saveExpenses(_regeisteredExpenses);
-                  },
-                  style: TextButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(59, 239, 221, 253),
-                  ),
-                  child: const Text("save",
-                      style: TextStyle(
-                        fontSize: 16,
-                      )),
-                ),
-                const SizedBox(
-                  height: 20,
-                )
               ],
             )
           : Row(
@@ -176,12 +181,6 @@ class _ExpensesState extends State<Expenses> with WidgetsBindingObserver {
                           child: Text('Add new Expense'),
                         ),
                 ),
-                TextButton(
-                  onPressed: () async {
-                    await _expenseStorage.saveExpenses(_regeisteredExpenses);
-                  },
-                  child: const Text("save"),
-                )
               ],
             ),
     );
