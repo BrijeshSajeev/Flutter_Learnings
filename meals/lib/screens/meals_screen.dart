@@ -1,16 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:meals/model/meals.dart';
+import 'package:meals/screens/meal_details_screen.dart';
+import 'package:meals/widgets/meals_item.dart';
 
 class MealsScreen extends StatelessWidget {
-  const MealsScreen({super.key, required this.title, required this.meals});
-  final String title;
+  const MealsScreen({super.key, this.title, required this.meals});
+  final String? title;
   final List<Meal> meals;
+
+  void mealDetail(BuildContext context, Meal meal) {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => MealDetailsScreen(meal: meal)));
+  }
 
   @override
   Widget build(BuildContext context) {
     Widget content = ListView.builder(
       itemCount: meals.length,
-      itemBuilder: (cxt, index) => Text(meals[index].title),
+      itemBuilder: (cxt, index) => MealsItem(
+        meal: meals[index],
+        onSelectMeal: mealDetail,
+      ),
     );
 
     if (meals.isEmpty) {
@@ -36,9 +46,12 @@ class MealsScreen extends StatelessWidget {
       );
     }
 
+    if (title == null) {
+      return content;
+    }
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(title!),
       ),
       body: content,
     );
