@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:meals/model/meals.dart';
 
 class MealDetailsScreen extends StatelessWidget {
-  const MealDetailsScreen({super.key, required this.meal});
+  const MealDetailsScreen(
+      {super.key, required this.meal, required this.onToggleMealFav});
   final Meal meal;
+  final void Function(Meal meal) onToggleMealFav;
+
   Widget _buildSectionTitle(BuildContext context, String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -61,6 +64,13 @@ class MealDetailsScreen extends StatelessWidget {
           meal.title,
           style: const TextStyle(fontSize: 20, color: Colors.white),
         ),
+        actions: [
+          IconButton(
+              onPressed: () {
+                onToggleMealFav(meal);
+              },
+              icon: const Icon(Icons.star))
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
