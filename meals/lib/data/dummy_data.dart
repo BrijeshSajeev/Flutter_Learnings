@@ -146,7 +146,7 @@ const dummyMeals = [
       'Serve burger with tomato, cucumber and onion'
     ],
     isGlutenFree: false,
-    isVegan: false,
+    isVegan: true,
     isVegetarian: false,
     isLactoseFree: true,
   ),
