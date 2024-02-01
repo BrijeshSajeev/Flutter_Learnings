@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meals/model/meals.dart';
+import 'package:meals/providers/favorites_provider.dart';
 
-class MealDetailsScreen extends StatelessWidget {
-  const MealDetailsScreen(
-      {super.key, required this.meal, required this.onToggleMealFav});
+class MealDetailsScreen extends ConsumerWidget {
+  const MealDetailsScreen({super.key, required this.meal});
   final Meal meal;
-  final void Function(Meal meal) onToggleMealFav;
 
   Widget _buildSectionTitle(BuildContext context, String title) {
     return Padding(
@@ -57,7 +57,7 @@ class MealDetailsScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -67,7 +67,18 @@ class MealDetailsScreen extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () {
-                onToggleMealFav(meal);
+                final isFav = ref
+                    .read(favoriteMealsProvider.notifier)
+                    .toogleFavoriteMealStatus(meal);
+
+                ScaffoldMessenger.of(context).clearSnackBars();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    duration: const Duration(seconds: 2),
+                    content: Text(
+                        isFav ? 'Added to Favoiate' : 'Removed from favroite'),
+                  ),
+                );
               },
               icon: const Icon(Icons.star))
         ],
