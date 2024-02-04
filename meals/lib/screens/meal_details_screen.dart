@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meals/model/meals.dart';
 import 'package:meals/providers/favorites_provider.dart';
+import 'package:meals/providers/filters_provider.dart';
 
 class MealDetailsScreen extends ConsumerWidget {
   const MealDetailsScreen({super.key, required this.meal});
@@ -58,6 +59,9 @@ class MealDetailsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final filteredMeals = ref.watch(filteredMelasProvider);
+    final isFav = filteredMeals.contains(meal);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -66,21 +70,22 @@ class MealDetailsScreen extends ConsumerWidget {
         ),
         actions: [
           IconButton(
-              onPressed: () {
-                final isFav = ref
-                    .read(favoriteMealsProvider.notifier)
-                    .toogleFavoriteMealStatus(meal);
+            onPressed: () {
+              final isFav = ref
+                  .read(favoriteMealsProvider.notifier)
+                  .toogleFavoriteMealStatus(meal);
 
-                ScaffoldMessenger.of(context).clearSnackBars();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    duration: const Duration(seconds: 2),
-                    content: Text(
-                        isFav ? 'Added to Favoiate' : 'Removed from favroite'),
-                  ),
-                );
-              },
-              icon: const Icon(Icons.star))
+              ScaffoldMessenger.of(context).clearSnackBars();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  duration: const Duration(seconds: 2),
+                  content: Text(
+                      isFav ? 'Added to Favoiate' : 'Removed from favroite'),
+                ),
+              );
+            },
+            icon: Icon(isFav ? Icons.star : Icons.star_border),
+          ),
         ],
       ),
       body: SingleChildScrollView(
