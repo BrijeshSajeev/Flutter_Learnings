@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meals/model/meals.dart';
 import 'package:meals/providers/favorites_provider.dart';
-import 'package:meals/providers/filters_provider.dart';
 
 class MealDetailsScreen extends ConsumerWidget {
   const MealDetailsScreen({super.key, required this.meal});
@@ -59,8 +58,8 @@ class MealDetailsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final filteredMeals = ref.watch(filteredMelasProvider);
-    final isFav = filteredMeals.contains(meal);
+    final favoriteMeals = ref.watch(favoriteMealsProvider);
+    final isFavorite = favoriteMeals.contains(meal);
 
     return Scaffold(
       appBar: AppBar(
@@ -84,7 +83,20 @@ class MealDetailsScreen extends ConsumerWidget {
                 ),
               );
             },
-            icon: Icon(isFav ? Icons.star : Icons.star_border),
+            icon: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: Icon(
+                isFavorite ? Icons.star : Icons.star_border,
+                key: ValueKey(isFavorite),
+              ),
+              transitionBuilder: (child, animation) => RotationTransition(
+                turns: Tween(
+                  begin: 0.8,
+                  end: 1.0,
+                ).animate(animation),
+                child: child,
+              ),
+            ),
           ),
         ],
       ),
@@ -95,13 +107,16 @@ class MealDetailsScreen extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: ClipRRect(
-                borderRadius:
-                    BorderRadius.circular(8), // Adjust the radius as needed
-                child: Image.network(
-                  meal.imageUrl,
-                  height: 280,
-                  // width: 10,
-                  fit: BoxFit.cover,
+                // borderRadius:
+                //     // BorderRadius.circular(8), // Adjust the radius as needed
+                child: Hero(
+                  tag: meal.id,
+                  child: Image.network(
+                    meal.imageUrl,
+                    height: 280,
+                    // width: 10,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
