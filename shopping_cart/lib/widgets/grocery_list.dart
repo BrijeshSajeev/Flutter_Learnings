@@ -27,33 +27,6 @@ class _GroceryListState extends State<GroceryList> {
   }
 
   void _loadItems() async {
-    // final url = Uri.https("flutterstarter-c6659-default-rtdb.firebaseio.com",
-    //     'shopping-list.json');
-    // final response = await http.get(url);
-    // if (response.statusCode >= 400) {
-    //   setState(() {
-    //     _error = 'Failed to load data, status code: ${response.statusCode}';
-    //   });
-    // }
-    // final Map<String, dynamic> listData = json.decode(response.body);
-    // final List<GroceryItem> loadedList = [];
-    // for (final item in listData.entries) {
-    //   final Category category = categories.entries
-    //       .firstWhere(
-    //           (catItem) => catItem.value.title == item.value['category'])
-    //       .value;
-
-    //   loadedList.add(GroceryItem(
-    //     id: item.key,
-    //     name: item.value['name'],
-    //     quantity: item.value['quantity'],
-    //     category: category,
-    //   ));
-    // }
-    // setState(() {
-    //   _groceryItems = loadedList;
-    //   _isLoading = false;
-    // });
     try {
       final url = Uri.https("flutterstarter-c6659-default-rtdb.firebaseio.com",
           'shopping-list.json');
@@ -106,10 +79,20 @@ class _GroceryListState extends State<GroceryList> {
   }
 
   void _deleteItem(id) async {
-    final url = Uri.https("flutterstarter-c6659-default-rtdb.firebaseio.com",
-        'shopping-list/$id.json');
-    await http.delete(url);
-    _loadItems();
+    try {
+      final url = Uri.https("flutterstarter-c6659-default-rtdb.firebaseio.com",
+          'shopping-list/$id.json');
+
+      final res = await http.delete(url);
+      if (res.statusCode >= 400) {
+        throw Exception('${res.statusCode} Failed to Delete data');
+      }
+      _loadItems();
+    } catch (e) {
+      setState(() {
+        _error = 'Error: $e';
+      });
+    }
   }
 
   @override
