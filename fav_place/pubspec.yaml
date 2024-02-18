@@ -38,6 +38,7 @@ dependencies:
   flutter_riverpod: ^2.4.10
   google_fonts: ^6.1.0
   uuid: ^4.3.3
+  image_picker: ^1.0.7
 
 dev_dependencies:
   flutter_test:
